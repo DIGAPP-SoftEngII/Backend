@@ -15,7 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework import routers
+from main.viewsets import UserViewSet
+from main import views
+
+router = routers.DefaultRouter()
+router.register(r'businesses', views.BusinessView, 'business')
+router.register(r'cities', views.CityView, 'city')
+router.register(r'consults', views.ConsultView, 'consult')
+router.register(r'users', UserViewSet)
 
 urlpatterns = [
+    path('', include('main.urls')), # when anybody is in the page without anything else it points now to main.urls
     path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),
 ]
