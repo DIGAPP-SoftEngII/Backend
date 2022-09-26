@@ -1,7 +1,8 @@
 from django.db import models
-
-# Create your models here.
 from django.contrib.auth.models import AbstractUser
+import datetime
+
+
 
 
 #USEFUL COMMANDS
@@ -11,6 +12,7 @@ from django.contrib.auth.models import AbstractUser
 import datetime
 
 # Create your models here.
+# Custom User Class
 # class Usuario(models.Model):
 #     nombre = models.CharField(max_length=55)
 #     puntaje = models.DecimalField(max_digits=2, decimal_places=1)
@@ -21,7 +23,14 @@ import datetime
 #     def __str__(self) -> str:
 #         return f'id: {self.id} {self.nombre}'
 
-# Custom User Class
+class City(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __str__(self) -> str:
+        return f'{self.name}'
+
+
+
 class Business(models.Model):
     name = models.CharField(max_length=100) 
     opening_time = models.TimeField(default=datetime.time(8, 0, 0), name='Opening')
@@ -38,3 +47,34 @@ class Business(models.Model):
 
     def __str__(self) -> str:
         return f'{self.id} {self.name} {self.type}'
+
+
+class Consult(models.Model):
+    date = models.DateTimeField(auto_now_add=True, auto_now=False) # Automatically add now as DateTime when created, but not when modified.
+    user_id = models.ForeignKey(User, default=1, verbose_name='UserID', on_delete=models.SET_DEFAULT)
+    business_id = models.ForeignKey(Business, default=1, verbose_name='BusinessID', on_delete=models.SET_DEFAULT)
+
+    def __str__(self) -> str:
+         return f'{self.user_id} {self.date}'    
+
+
+class Report(models.Model):
+    date = models.DateTimeField(auto_now_add=True, auto_now=False) # Automatically add now as DateTime when created, but not when modified.
+    user_id = models.ForeignKey(User, default=1, verbose_name='UserID', on_delete=models.SET_DEFAULT)
+    business_id = models.ForeignKey(Business, default=1, verbose_name='BusinessID', on_delete=models.SET_DEFAULT)
+    occupation_status = models.ForeignKey(OccupationStatus, default=1, verbose_name='Ocupation', on_delete=models.SET_DEFAULT)
+    internet_status = models.DecimalField(max_digits=2, decimal_places=1) # make a difference from internet_quality
+    rating_business = models.DecimalField(max_digits=2, decimal_places=1) # Should go from 1 to 5
+    report_support = models.IntegerField(null=True, default=0)
+    comments = models.TextField(null=True, blank=True)
+
+    def __str__(self) -> str:
+         return f'Report made by {self.user_id} on {self.date}'
+
+class Favorite(models.Model):
+    user_id = models.ForeignKey(User, default=1, verbose_name='UserID', on_delete=models.SET_DEFAULT)
+    business_id = models.ForeignKey(Business, default=1, verbose_name='BusinessID', on_delete=models.SET_DEFAULT)
+
+    def __str__(self) -> str:
+         return f'{self.user_id} tiene por favorito a {self.business_id}'
+    
