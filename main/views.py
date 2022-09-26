@@ -1,17 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from django.urls import reverse
 from .models import *
 from .forms import NewUserForm
 from rest_framework import viewsets
 from rest_framework.decorators import action    
 from .serializers import *
-from .forms import NewUserForm, ReportForm
+from .forms import NewUserForm
 from django.contrib.auth import get_user_model
-from django.db.models import Avg
 
 
 User = get_user_model()
