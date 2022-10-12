@@ -1,8 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-import datetime
-
-
 
 
 #USEFUL COMMANDS
@@ -12,7 +9,6 @@ import datetime
 import datetime
 
 # Create your models here.
-# Custom User Class
 # class Usuario(models.Model):
 #     nombre = models.CharField(max_length=55)
 #     puntaje = models.DecimalField(max_digits=2, decimal_places=1)
@@ -23,12 +19,36 @@ import datetime
 #     def __str__(self) -> str:
 #         return f'id: {self.id} {self.nombre}'
 
+# Custom User Class
+
+class OccupationStatus(models.Model):
+    status = models.CharField(max_length=20)
+
+    def __str__(self) -> str:
+        return f'{self.status}'
+
 class City(models.Model):
     name = models.CharField(max_length=30)
 
     def __str__(self) -> str:
         return f'{self.name}'
 
+class User(AbstractUser):
+    username = models.CharField(max_length=30, unique=True)
+    email = models.EmailField(max_length=254,unique=True, null=True, blank=True)
+    avatar = models.ImageField(upload_to='main/images/user_profile', blank=True) # Uses Pillow Lib, see requirements.
+    
+    # more specific to business logic
+    city = models.ForeignKey(City, default=1, verbose_name='City', on_delete=models.SET_DEFAULT)
+    rating = models.DecimalField(max_digits=2, decimal_places=1, null=True, blank=True)
+    telephone_number = models.CharField(max_length=15, null=True, blank=True)
+
+
+    def __str__(self) -> str:
+         return f'id: {self.id} {self.first_name} {self.email}'
+
+    class Meta(AbstractUser.Meta):
+       swappable = 'AUTH_USER_MODEL'
 
 
 class Business(models.Model):
@@ -77,4 +97,5 @@ class Favorite(models.Model):
 
     def __str__(self) -> str:
          return f'{self.user_id} tiene por favorito a {self.business_id}'
+    
     

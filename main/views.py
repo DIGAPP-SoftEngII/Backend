@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
+from django.urls import reverse
 from .models import *
 from .forms import NewUserForm
 from rest_framework import viewsets
 from rest_framework.decorators import action    
 from .serializers import *
-from .forms import NewUserForm
+from .forms import NewUserForm, ReportForm
 from django.contrib.auth import get_user_model
+from django.db.models import Avg
 
 
 User = get_user_model()
@@ -131,6 +133,59 @@ def business_profile(request, business_id):
     return render(request, "main/biz_detail.html", {
         "business" : business
     })
+
+def support_report(request, business_id):
+    business = get_object_or_404(Business, pk=business_id) # Question.objects.get(pk=1) # Handle error for selected question
+    
+    try: # handle error for selected choice
+        selected_report = business.report_set.get(pk=request.POST["button_support"]) # Rescata la opción que está en "value" del HTML llamado "button_support" que es el id del objeto de tipo 'Report'.
+        # En el form la clave es: name='button_support' value={{report.id}}
+    except(KeyError, Report.DoesNotExist):
+        return render(request, "main/biz_profile.html", {
+            "business": business,
+            "error_message": "No elegiste un reporte"
+        })
+    else:
+        selected_report.report_support += 1
+        selected_report.save()
+        return HttpResponseRedirect( reverse("main:biz_profile", args=(business.id, ) ) )
+
+def make_report(request, business_id):
+    if request.method == "POST":
+        form = ReportForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            business = get_object_or_404(Business, pk=business_id)
+            business.rating= round(Report.objects.filter(business_id__exact=business_id).aggregate(Avg('rating_business'))['rating_business__avg'],1)
+            business.internet_quality= round(Report.objects.filter(business_id__exact=business_id).aggregate(Avg('internet_status'))['internet_status__avg'],1)
+            business.save()
+            return HttpResponseRedirect( reverse("main:biz_profile", args=(business_id, ) ) )
+        else:
+            messages.error(request, "Invalid form!")
+
+
+    form = ReportForm()
+    return render(request, "main/make_report.html", {
+        "form": form,
+        })
+    
+       
+# def add_favorite(request, business_id):
+#     business = get_object_or_404(Business, pk=business_id) # Question.objects.get(pk=1) # Handle error for selected question
+    
+#     try: # handle error for selected choice
+#         selected_report = business.report_set.get(pk=request.POST["button_support"]) # Rescata la opción que está en "value" del HTML llamado "choice" que es el id del objeto de tipo 'Choice'.
+#         # En el form la clave es: name='button_support' value={{report.id}}
+#     except(KeyError, Report.DoesNotExist):
+#         return render(request, "main/biz_profile.html", {
+#             "business": business,
+#             "error_message": "No elegiste un reporte"
+#         })
+#     else:
+#         selected_report.report_support += 1
+#         selected_report.save()
+#         return HttpResponseRedirect( reverse("main:biz_profile", args=(business.id, ) ) )
+
 
 def cities(request):
     return HttpResponse("Currently you are in  <strong>CITY</strong>, to change click the button below.")
