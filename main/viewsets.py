@@ -21,8 +21,8 @@ class BusinessViewSet(viewsets.ModelViewSet):
     queryset = Business.objects.all()
     serializer_class = BusinessSerializer
 
-    @action(methods=['get'], detail=True, url_path='login', url_name='login')
-    def login(self, request, *args, **kwargs):
+    @action(methods=['get'], detail=True, url_path='login', url_name='loginBusiness')
+    def loginBusiness(self, request, *args, **kwargs):
         
         name = request.query_params.get('name');
         #password = request.query_params.get('password');
