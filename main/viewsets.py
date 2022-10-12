@@ -1,9 +1,9 @@
 import re
-from .models import User
+from .models import User, Business
 from rest_framework import viewsets, response, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .serializers import UserSerializer 
+from .serializers import BusinessSerializer, UserSerializer 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -16,6 +16,18 @@ class UserViewSet(viewsets.ModelViewSet):
         password = request.query_params.get('password');
         queryset = User.objects.filter(email=email,password=password).values();
         return Response(queryset);
+
+class BusinessViewSet(viewsets.ModelViewSet):
+    queryset = Business.objects.all()
+    serializer_class = BusinessSerializer
+
+    @action(methods=['get'], detail=True, url_path='login', url_name='login')
+    def login(self, request, *args, **kwargs):
+        
+        name = request.query_params.get('name');
+        #password = request.query_params.get('password');
+        queryset = Business.objects.filter(name=name).values();
+        return Response(queryset)
 
     # def create(self, request, *args, **kwargs):
     #     serializer = UserSerializer(data=request.data)

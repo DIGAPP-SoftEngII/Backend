@@ -21,10 +21,6 @@ User = get_user_model()
 class BusinessView(viewsets.ModelViewSet):
     serializer_class = BusinessSerializer
     queryset = Business.objects.all()
-    
-    @action(methods=['get'], detail=True, url_path='login', url_name='login')
-    def login(self, request):
-        return []
 
 
 class CityView(viewsets.ModelViewSet):
@@ -43,7 +39,8 @@ class FavoriteView(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
 
-#  Not using currently
+
+#  Not using currently.
 class UserViews(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
