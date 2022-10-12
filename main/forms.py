@@ -28,3 +28,10 @@ class ReportForm(forms.ModelForm):
         model = Report
         fields = "__all__"
         # fields = ('occupation_status', 'internet_status', 'rating_business', 'comments')
+
+class BusinessCreationForm(forms.ModelForm):
+
+    class Meta:
+        model = Business
+        fields = "__all__"
+        # fields = ('occupation_status', 'internet_status', 'rating_business', 'comments')
