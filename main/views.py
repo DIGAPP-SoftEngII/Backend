@@ -292,4 +292,4 @@ def make_report(request, business_id):
 
 
 def cities(request):
-    return HttpResponse("Currently you are in  <strong>CITY</strong>, to change click the button below.")
+    return HttpResponse("HEY TODAY IS OCTOBER  31st. Currently you are in  <strong>CITY</strong>, to change click the button below.")
