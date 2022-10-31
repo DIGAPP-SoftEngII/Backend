@@ -14,20 +14,10 @@ class UserViewSet(viewsets.ModelViewSet):
         
         email = request.query_params.get('email');
         password = request.query_params.get('password');
-        queryset = User.objects.filter(email=email,password=password).values();
+        queryset = User.objects.filter(email=email, password=password).values();
         return Response(queryset);
 
-class BusinessViewSet(viewsets.ModelViewSet):
-    queryset = Business.objects.all()
-    serializer_class = BusinessSerializer
 
-    @action(methods=['get'], detail=True, url_path='login', url_name='loginBusiness')
-    def loginBusiness(self, request, *args, **kwargs):
-        
-        name = request.query_params.get('name');
-        #password = request.query_params.get('password');
-        queryset = Business.objects.filter(name=name).values();
-        return Response(queryset)
 
     # def create(self, request, *args, **kwargs):
     #     serializer = UserSerializer(data=request.data)

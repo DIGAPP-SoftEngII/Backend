@@ -6,7 +6,8 @@ from django.contrib import messages
 from django.urls import reverse
 from .models import *
 from .forms import NewUserForm
-from rest_framework import viewsets
+from rest_framework import viewsets, APIView
+from rest_framework import filters
 from rest_framework.decorators import action    
 from .serializers import *
 from .forms import NewUserForm, ReportForm
@@ -21,8 +22,11 @@ User = get_user_model()
 class BusinessView(viewsets.ModelViewSet):
     serializer_class = BusinessSerializer
     queryset = Business.objects.all()
-
-
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    
+    
+    
 class CityView(viewsets.ModelViewSet):
     serializer_class = CitySerializer
     queryset = City.objects.all()
@@ -40,17 +44,11 @@ class FavoriteView(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
 
 
-#  Not using currently.
-class UserViews(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
 
-    @action(methods=['get'], detail=True, url_path='login', url_name='login')
-    def login(self, request):
-        return []
+
 
 #######################################################################################
-"""TEMPLATES DJANGO"""
+"""TEMPLATES DJANGO, Just for testing"""
 
 def login_user(request):
     email = request.GET['email']
