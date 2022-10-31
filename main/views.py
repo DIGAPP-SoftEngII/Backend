@@ -84,6 +84,71 @@ class ReportView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class ReportViewDetail(APIView):
+    def get_object(self, report_id):
+        '''
+        Helper method to get the object with given todo_id, and user_id
+        '''
+        try:
+            return Report.objects.get(id=report_id)
+        except Report.DoesNotExist:
+            return None
+
+    # 3. Retrieve
+    def get(self, request, rerport_id, *args, **kwargs):
+        '''
+        Retrieves the Todo with given todo_id
+        '''
+        report_instance = self.get_object(rerport_id)
+        if not report_instance:
+            return Response(
+                {"res": "Object with todo id does not exists"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = ReportSerializer(report_instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # 4. Update
+    def put(self, request, todo_id, *args, **kwargs):
+        '''
+        Updates the todo item with given todo_id if exists
+        '''
+        report_instance = self.get_object(todo_id)
+        if not report_instance:
+            return Response(
+                {"res": "Object with todo id does not exists"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        data = {
+            'internet_status': request.data.get('internet_status'), 
+            'rating_business': request.data.get('rating_business'), 
+            'comments': request.data.get('comments'), 
+        }
+        serializer = ReportSerializer(instance = report_instance, data=data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # 5. Delete
+    def delete(self, request, report_id, *args, **kwargs):
+        '''
+        Deletes the todo item with given todo_id if exists
+        '''
+        report_instance = self.get_object(report_id)
+        if not report_instance:
+            return Response(
+                {"res": "Object with todo id does not exists"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        report_instance.delete()
+        return Response(
+            {"res": "Object deleted!"},
+            status=status.HTTP_200_OK
+        )
 
 #######################################################################################
 """TEMPLATES DJANGO, Just for testing"""
