@@ -97,11 +97,11 @@ class ReportViewDetail(APIView):
             return None
 
     # 3. Retrieve
-    def get(self, request, rerport_id, *args, **kwargs):
+    def get(self, request, report_id, *args, **kwargs):
         '''
         Retrieves the Todo with given todo_id
         '''
-        report_instance = self.get_object(rerport_id)
+        report_instance = self.get_object(report_id)
         if not report_instance:
             return Response(
                 {"res": "Object with todo id does not exists"},
@@ -112,11 +112,11 @@ class ReportViewDetail(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
-    def put(self, request, todo_id, *args, **kwargs):
+    def put(self, request, report_id, *args, **kwargs):
         '''
         Updates the todo item with given todo_id if exists
         '''
-        report_instance = self.get_object(todo_id)
+        report_instance = self.get_object(report_id)
         if not report_instance:
             return Response(
                 {"res": "Object with todo id does not exists"}, 
