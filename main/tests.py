@@ -17,9 +17,11 @@ def setUp(self):
             telephone_number=None, cover_picture = None)
     
 
-def test_puppy_breed(self):
+def test_Bussiness_City(self):
+    # Retrieveing Object by name
     weWork11b = Business.objects.get(name='WeWork Calle 11b')
     
+    # Asserting that it is the City
     self.assertEqual(
         weWork11b.city, 1)
        

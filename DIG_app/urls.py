@@ -23,9 +23,9 @@ router = routers.DefaultRouter()
 router.register(r'businesses', views.BusinessView, 'business')
 router.register(r'cities', views.CityView, 'city')
 router.register(r'consults', views.ConsultView, 'consult')
-router.register(r'reports', views.ReportView, 'report')
 router.register(r'favorites', views.FavoriteView, 'favorite')
 router.register(r'users', UserViewSet)
+#router.register(r'reports', )
 
 
 
@@ -33,5 +33,6 @@ urlpatterns = [
     path('', include('main.urls')), # when anybody is in the page without anything else it points now to main.urls
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('api/reports', views.ReportView.as_view())
     #path( 'tinymce/', include('tinymce.urls') ),
 ]

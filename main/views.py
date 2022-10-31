@@ -6,8 +6,10 @@ from django.contrib import messages
 from django.urls import reverse
 from .models import *
 from .forms import NewUserForm
-from rest_framework import viewsets, APIView
+from rest_framework import viewsets, status
 from rest_framework import filters
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.decorators import action    
 from .serializers import *
 from .forms import NewUserForm, ReportForm
@@ -24,8 +26,7 @@ class BusinessView(viewsets.ModelViewSet):
     queryset = Business.objects.all()
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    
-    
+        
     
 class CityView(viewsets.ModelViewSet):
     serializer_class = CitySerializer
@@ -35,17 +36,54 @@ class ConsultView(viewsets.ModelViewSet):
     serializer_class = ConsultSerializer
     queryset = Consult.objects.all()
 
-class ReportView(viewsets.ModelViewSet):
-    serializer_class = ReportSerializer
-    queryset = Report.objects.all()
-
 class FavoriteView(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
 
+class ReportView(APIView):
+    serializer_class = ReportSerializer
+    queryset = Report.objects.all()
 
+    # 1. List all
+    def get(self, request, *args, **kwargs):
+        '''
+        List all the todo items for given requested user
+        '''
+        reports = Report.objects.all()
+        serializer = ReportSerializer(reports, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
+    # 2. Create
+    def post(self, request, *args, **kwargs):
+        '''
+        Create the Report with given todo data
+        '''
+        data = {
+            'id' : request.data.get('id'),
+            'date' : request.data.get('date'),
+            'internet_status': request.data.get('internet_status'), 
+            'rating_business': request.data.get('rating_business'), 
+            'report_support' : request.data.get('report_support'),
+            'comments' : request.data.get('comments'),
+            'user_id': request.data.get('user_id'),
+            'business_id': request.data.get('business_id'),
+            'occupation_status': request.data.get('occupation_status')
+        }
+        
+        # We modify now every time 
+        business_id = request.data.get('business_id')
+        business = get_object_or_404(Business, pk=business_id)
+        
+        business.rating= round(Report.objects.filter( business_id__exact=business_id).aggregate(Avg('rating_business') )['rating_business__avg'], 1) # Round to 1 digit
+        business.internet_quality= round( Report.objects.filter(business_id__exact=business_id).aggregate(Avg('internet_status'))['internet_status__avg'], 1) # Round to one digit
+        business.save()
+        
+        serializer = ReportSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 #######################################################################################
 """TEMPLATES DJANGO, Just for testing"""
