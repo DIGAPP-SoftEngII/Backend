@@ -73,10 +73,16 @@ class ReportView(APIView):
         # We modify now every time 
         business_id = request.data.get('business_id')
         business = get_object_or_404(Business, pk=business_id)
+        #DEBUG
+        print('Business Rating Previous', business.rating)
         
-        business.rating= round(Report.objects.filter( business_id__exact=business_id).aggregate(Avg('rating_business') )['rating_business__avg'], 1) # Round to 1 digit
+        business.rating = round(Report.objects.filter( business_id__exact=business_id).aggregate(Avg('rating_business') )['rating_business__avg'], 1) # Round to 1 digit
+        
         business.internet_quality= round( Report.objects.filter(business_id__exact=business_id).aggregate(Avg('internet_status'))['internet_status__avg'], 1) # Round to one digit
+        
         business.save()
+        #DEBUG
+        print('Business Rating after', business.rating)
         
         serializer = ReportSerializer(data=data)
         if serializer.is_valid():
