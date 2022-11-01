@@ -76,9 +76,9 @@ class ReportView(APIView):
         #DEBUG
         print('Business Rating Previous', business.rating)
         
-        business.rating = round(Report.objects.filter( business_id__exact=business_id).aggregate(Avg('rating_business') )['rating_business__avg'], 1) # Round to 1 digit
+        business.rating = round(Report.objects.filter( business_id__exact=business_id).aggregate(Avg('rating_business') )['rating_business__avg'], 2) # Round to 1 digit
         
-        business.internet_quality= round( Report.objects.filter(business_id__exact=business_id).aggregate(Avg('internet_status'))['internet_status__avg'], 1) # Round to one digit
+        business.internet_quality= round( Report.objects.filter(business_id__exact=business_id).aggregate(Avg('internet_status'))['internet_status__avg'], 2) # Round to one digit
         
         business.save()
         #DEBUG
