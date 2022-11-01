@@ -34,6 +34,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/reports/', views.ReportView.as_view() ),
-    path('api/reports/<int:report_id>', views.ReportViewDetail.as_view() )
+    path('api/reports/<int:report_id>/', views.ReportViewDetail.as_view() )
     #path( 'tinymce/', include('tinymce.urls') ),
 ]
