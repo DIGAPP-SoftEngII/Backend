@@ -33,7 +33,7 @@ urlpatterns = [
     path('', include('main.urls')), # when anybody is in the page without anything else it points now to main.urls
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/reports', views.ReportView.as_view() ),
+    path('api/reports/', views.ReportView.as_view() ),
     path('api/reports/<int:report_id>', views.ReportViewDetail.as_view() )
     #path( 'tinymce/', include('tinymce.urls') ),
 ]
