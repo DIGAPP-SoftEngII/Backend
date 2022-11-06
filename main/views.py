@@ -56,11 +56,11 @@ class ReportView(APIView):
     # 2. Create
     def post(self, request, *args, **kwargs):
         '''
-        Create the Report with given todo data
+        Create the Report with given data
         '''
         data = {
-            'id' : request.data.get('id'),
-            'date' : request.data.get('date'),
+            # 'id' : request.data.get('id'),
+            # 'date' : request.data.get('date'),
             'internet_status': request.data.get('internet_status'), 
             'rating_business': request.data.get('rating_business'), 
             'report_support' : request.data.get('report_support'),
@@ -75,14 +75,30 @@ class ReportView(APIView):
         business = get_object_or_404(Business, pk=business_id)
         #DEBUG
         print('Business Rating Previous', business.rating)
+        print('Business Internet after', business.internet_quality)
         
-        business.rating = round(Report.objects.filter( business_id=business_id).aggregate(Avg('rating_business') )['rating_business__avg'], 2) # Round to 1 digit
+        print('Len reports: ', len( Report.objects.all() ))
         
-        business.internet_quality= round( Report.objects.filter(business_id=business_id).aggregate(Avg('internet_status'))['internet_status__avg'], 2) # Round to one digit
+        # Saving average_biz_rating
+        if len( Report.objects.all() ) != 0:
+            average_biz_rating = Report.objects.filter( business_id=business_id).aggregate(Avg('rating_business') )['rating_business__avg'] 
+            if average_biz_rating is not None:
+                business.rating = round(average_biz_rating, 1)
+            else:
+                business.rating = 0
+            
+            # Saving average_internet_rating
+            average_internet_rating = Report.objects.filter( business_id=business_id).aggregate(Avg('internet_status') )['internet_status__avg']
+            if average_biz_rating is not None:
+                business.internet_quality = round ( average_internet_rating, 1)
+            else:
+                business.rating = 0
+        
         
         business.save()
         #DEBUG
         print('Business Rating after', business.rating)
+        print('Business Internet after', business.internet_quality)
         
         serializer = ReportSerializer(data=data)
         if serializer.is_valid():
@@ -95,7 +111,7 @@ class ReportView(APIView):
 class ReportViewDetail(APIView):
     def get_object(self, report_id):
         '''
-        Helper method to get the object with given todo_id, and user_id
+        Helper method to get the object with given id.
         '''
         try:
             return Report.objects.get(id=report_id)
@@ -105,7 +121,7 @@ class ReportViewDetail(APIView):
     # 3. Retrieve
     def get(self, request, report_id, *args, **kwargs):
         '''
-        Retrieves the Todo with given todo_id
+        Retrieves the Report with given report_id
         '''
         report_instance = self.get_object(report_id)
         if not report_instance:
