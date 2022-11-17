@@ -12,9 +12,11 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, url_path='login', url_name='login')
     def login(self, request, *args, **kwargs):
         
-        email = request.query_params.get('email');
-        password = request.query_params.get('password');
-        queryset = User.objects.filter(email=email, password=password).values();
+        #email = request.query_params.get('email');
+        #password = request.query_params.get('password');
+        #queryset = User.objects.filter(email=email, password=password).values();
+        id = request.query_params.get('id');
+        queryset = User.objects.filter(id=id).values();
         return Response(queryset);
 
 

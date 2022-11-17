@@ -34,9 +34,12 @@ class City(models.Model):
         return f'{self.name}'
 
 class User(AbstractUser):
+    id = models.BigIntegerField(primary_key=True)
+    auth0_id = models.CharField(max_length=140, unique=False, blank=True, null=True)
     username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(max_length=254,unique=True, null=True, blank=True)
-    avatar = models.ImageField(upload_to='main/images/user_profile', blank=True) # Uses Pillow Lib, see requirements.
+    avatar = models.ImageField(upload_to='main/images/user_profile', blank=True, null=True) # Uses Pillow Lib, see requirements.
+    #password = models.CharField(max_length=150, unique=False)
     
     # more specific to business logic
     city = models.ForeignKey(City, default=1, verbose_name='City', on_delete=models.SET_DEFAULT)
