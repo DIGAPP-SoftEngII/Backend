@@ -34,7 +34,7 @@ class City(models.Model):
         return f'{self.name}'
 
 class User(AbstractUser):
-    id = models.BigIntegerField(primary_key=True)
+    #id = models.BigIntegerField(primary_key=True)
     auth0_id = models.CharField(max_length=140, unique=False, blank=True, null=True)
     username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(max_length=254,unique=True, null=True, blank=True)
