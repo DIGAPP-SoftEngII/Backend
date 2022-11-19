@@ -73,39 +73,52 @@ class ReportView(APIView):
         # We modify now every time 
         business_id = request.data.get('business_id')
         business = get_object_or_404(Business, pk=business_id)
+        
+        
+        
         #DEBUG
         print('Business Rating Previous', business.rating)
         print('Business Internet after', business.internet_quality)
+        print('Len reports Prev.: ', len( Report.objects.filter(business_id=business_id ) ))
         
-        print('Len reports: ', len( Report.objects.all() ))
-        
-        # Saving average_biz_rating
-        if len( Report.objects.all() ) != 0:
-            average_biz_rating = Report.objects.filter( business_id=business_id).aggregate(Avg('rating_business') )['rating_business__avg'] 
-            if average_biz_rating is not None:
-                business.rating = round(average_biz_rating, 1)
-            else:
-                business.rating = 0
-            
-            # Saving average_internet_rating
-            average_internet_rating = Report.objects.filter( business_id=business_id).aggregate(Avg('internet_status') )['internet_status__avg']
-            if average_biz_rating is not None:
-                business.internet_quality = round ( average_internet_rating, 1)
-            else:
-                business.rating = 0
-        
-        
-        business.save()
-        #DEBUG
-        print('Business Rating after', business.rating)
-        print('Business Internet after', business.internet_quality)
-        
+        # Saving the new POST
         serializer = ReportSerializer(data=data)
         if serializer.is_valid():
+            # Saving Report Object
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+            # Saving average_biz_rating
+            if len( Report.objects.filter(business_id=business_id ) ) != 0:
+                average_biz_rating = Report.objects.filter( business_id=business_id).aggregate(Avg('rating_business') )['rating_business__avg'] 
+                print('Average business Rating ', average_biz_rating)
+                if average_biz_rating is not None:
+                    business.rating = round(average_biz_rating, 2)
+                else:
+                    business.rating = data['rating_business']
+                
+                # Saving average_internet_rating
+                average_internet_rating = Report.objects.filter( business_id=business_id).aggregate(Avg('internet_status') )['internet_status__avg']
+                print('Average internet ', average_internet_rating)
+                if average_biz_rating is not None:
+                    business.internet_quality = round ( average_internet_rating, 2)
+                else:
+                    business.internet_quality = data['internet_status']
+            else:
+                business.rating = data['rating_business']
+                business.internet_quality = data['internet_status']
+            
+            business.save()
+            #DEBUG
+            print('Business Rating after', business.rating)
+            print('Business Internet after', business.internet_quality)
+            # Returning Success
+            return Response(serializer.data, status=status.HTTP_201_CREATED)  
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        
+        
+        
     
 
 class ReportViewDetail(APIView):
