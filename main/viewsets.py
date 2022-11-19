@@ -15,8 +15,8 @@ class UserViewSet(viewsets.ModelViewSet):
         #email = request.query_params.get('email');
         #password = request.query_params.get('password');
         #queryset = User.objects.filter(email=email, password=password).values();
-        id = request.query_params.get('id');
-        queryset = User.objects.filter(id=id).values();
+        auth0_id = request.query_params.get('auth0_id');
+        queryset = User.objects.filter(auth0_id=auth0_id).values();
         return Response(queryset);
 
 
