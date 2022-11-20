@@ -67,6 +67,7 @@ class Business(models.Model):
     description = models.TextField()
     telephone_number = models.CharField(max_length=15, null=True, blank=True)
     cover_picture = models.CharField(max_length=300, null=True, blank=True)
+    user_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self) -> str:
         return f'{self.id} {self.name} {self.type}'
