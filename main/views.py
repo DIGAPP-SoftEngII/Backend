@@ -25,7 +25,7 @@ class BusinessView(viewsets.ModelViewSet):
     serializer_class = BusinessSerializer
     queryset = Business.objects.all()
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
+    search_fields = ('name', 'city')
         
     
 class CityView(viewsets.ModelViewSet):
