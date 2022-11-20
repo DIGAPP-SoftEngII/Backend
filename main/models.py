@@ -36,7 +36,7 @@ class City(models.Model):
 class User(AbstractUser):
     #id = models.BigIntegerField(primary_key=True)
     auth0_id = models.CharField(max_length=140, unique=False, blank=True, null=True)
-    username = models.CharField(max_length=30, unique=True)
+    username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(max_length=254,unique=True, null=True, blank=True)
     avatar = models.ImageField(upload_to='main/images/user_profile', blank=True, null=True) # Uses Pillow Lib, see requirements.
     #password = models.CharField(max_length=150, unique=False)
