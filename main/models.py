@@ -58,7 +58,7 @@ class Business(models.Model):
     name = models.CharField(max_length=100) 
     opening_time = models.TimeField(default=datetime.time(8, 0, 0), name='Opening')
     closing_time = models.TimeField(default=datetime.time(19, 0, 0) , name='Closing')
-    city = models.ForeignKey(City, default=1, verbose_name='City', on_delete=models.SET_DEFAULT)
+    city = models.ForeignKey(City, default=1, verbose_name='City', on_delete=models.DO_NOTHING)
     type = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
     capacity = models.IntegerField()
@@ -85,7 +85,7 @@ class Consult(models.Model):
 class Report(models.Model):
     date = models.DateTimeField(auto_now_add=True, auto_now=False) # Automatically add now as DateTime when created, but not when modified.
     user_id = models.ForeignKey(User, default=1, verbose_name='UserID', on_delete=models.SET_DEFAULT)
-    business_id = models.ForeignKey(Business, default=1, verbose_name='BusinessID', on_delete=models.SET_DEFAULT)
+    business_id = models.ForeignKey(Business, default=1, verbose_name='BusinessID', on_delete=models.CASCADE)
     occupation_status = models.ForeignKey(OccupationStatus, default=1, verbose_name='Ocupation', on_delete=models.SET_DEFAULT)
     internet_status = models.DecimalField(max_digits=2, decimal_places=1) # make a difference from internet_quality
     rating_business = models.DecimalField(max_digits=2, decimal_places=1) # Should go from 1 to 5
